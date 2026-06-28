@@ -11,7 +11,7 @@ class ThemeRef:
                 log.debugprint(f'File root: {root}, dir: {dir}, file: {file}')
                 log.print(f'Reading {root}/{file}')
                 with open(f'{root}/{file}', "r") as f:
-                    self.themeparts[f'{root}/{file}'] = Component(f.read(), log) #wacky hack to match the theme keyes to the flattened rules
+                    self.themeparts[f'{root}/{file}'] = Component(f.read(), log, file) #wacky hack to match the theme keyes to the flattened rules
         pass
 
     def getThemeParts(self):

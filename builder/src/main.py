@@ -53,7 +53,8 @@ def main():
         log.debugprint(f'k:{k}')
 
     #rule `use`
-    userefs = []
+    refs= {}
+    ruleregex = []
     for e in rules:
         k = next(iter(e))
 
@@ -67,18 +68,42 @@ def main():
         regex = re.compile(f'^{re.escape(path)}*')
         log.debugprint(path)
 
-        #iterate over theme refs and match
-        for theme in themerefs:
-            for ref in theme.getThemeParts().keys():
-                log.debugprint(f'attempting {ref} to {regex}')
-                match = regex.match(ref)
-                if match is not None:
-                    log.debugprint(f'matched ref {ref}')
-                    userefs.append(ref)
+        ruleregex.append((regex, rule, e[k]))
+
+
+    #    #iterate over theme refs and match
+    #    for theme in themerefs:
+    #        for ref in theme.getThemeParts().keys():
+    #            log.debugprint(f'attempting {ref} to {regex}')
+    #            match = regex.match(ref)
+    #            if match is not None:
+    #                log.debugprint(f'matched ref {ref}')
+    #                userefs.append(ref)
+    for theme in themerefs:
+        for ref in theme.getThemeParts().keys():
+            for regex, rule, value in ruleregex:
+                if regex.match(ref) is not None:
+                    log.debugprint(f'matched {ref} to {rule}:{value}')
+                    component = theme.getThemeParts()[ref]
+
+                    #`use` replaces previous reference
+                    if rule == "use":
+                        if value == True:
+                            log.debugprint(f'Ref added: {component.getName()}', DebugLevel.SOME)
+                            refs[component.getName()] = component
+                        elif value == False:
+                            if refs[component.getName()] == component:
+                                refs.pop(component.getName())
+                    else:
+                        if hasattr(refs, component.getName()) is not None:
+                            log.debugprint(f'rule should modify {refs[component.getName()]}')
+                            refs[component.getName()].modify(rule, value)
+                        else:
+                            log.print(f'Rule declared without `use` or previous component to overload.', LogLevel.WARNING)
 
     log.debugprint("userefs:")
-    for ref in userefs:
-        log.debugprint(ref)
+    for key, ref in refs.items():
+        log.debugprint(f'{key}: {ref.getMetadata()}')
 
 if __name__ == "__main__":
     main()
