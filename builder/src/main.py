@@ -5,6 +5,7 @@ from log import LogLevel
 from log import DebugLevel
 from protodoc import Protodoc
 from themerefs import ThemeRef
+from assembler import assemble
 
 log = Logger()
 
@@ -131,6 +132,8 @@ def main():
     log.debugprint("userefs:")
     for key, ref in refs.items():
         log.debugprint(f'{key}: {ref.getMetadata()}')
+
+    assemble(log, '.', refs)
 
 if __name__ == "__main__":
     main()
