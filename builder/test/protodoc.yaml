@@ -1,0 +1,15 @@
+version: "1.0"
+themes: ["example", "another"]
+layers:
+  example:
+    theme:
+      use: True
+  another:
+    theme:
+      components:
+        button:
+          secondary.md:
+            use: True
+          tertiary.md:
+            use: True
+            backgroundColor: "black"
