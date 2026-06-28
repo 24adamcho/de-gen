@@ -11,8 +11,8 @@ class Protodoc:
         data: dict = yaml.safe_load(self.contents)
         log.print("Loaded.")
 
-        if "version" in data:
-            self.version: str = data["version"];
+        if "docver" in data:
+            self.version: str = data["docver"];
         else:
             log.error("Could not find field 'version' in protodoc.")
             

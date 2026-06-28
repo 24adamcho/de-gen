@@ -8,10 +8,11 @@ A question mark means that a field is optional.
 
 Name | Type | Example | Description
 ------------------
-`version` | String | `version:"1.0"` | Protodoc specification version
+`docver` | String | `docver:"1.0"` | Protodoc specification version
 `lang`? | String | `lang:"en-us"` | Language setting for design.md output.
 `themes` | String array | `themes: ["example/theme"]` | List of folder locations for theme imports.
 `layers` | Multi-field tree | see section on layers | Structure describing what components are taken from themes.
+`headers` | Multi-field tree | see design.md examples and documentation | YAML segment that is carried directly to the output design.md YAML.
 
 ## Layer fields:
 Layer fields should mirror the file structure of the components inside the theme they are borrowing from. Travelling down, each component can be either used as-is or traversed further for fine-grain control.
