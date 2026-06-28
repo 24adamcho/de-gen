@@ -52,8 +52,6 @@ def main():
     for k in rules:
         log.debugprint(f'k:{k}')
 
-    #rule `use`
-    refs= {}
     ruleregex = []
     for e in rules:
         k = next(iter(e))
@@ -79,28 +77,57 @@ def main():
     #            if match is not None:
     #                log.debugprint(f'matched ref {ref}')
     #                userefs.append(ref)
+
+    refs= {}
     for theme in themerefs:
         for ref in theme.getThemeParts().keys():
             for regex, rule, value in ruleregex:
                 if regex.match(ref) is not None:
                     log.debugprint(f'matched {ref} to {rule}:{value}')
                     component = theme.getThemeParts()[ref]
+                    alreadyDefined = component.getName() in refs.keys()
 
                     #`use` replaces previous reference
                     if rule == "use":
                         if value == True:
-                            log.debugprint(f'Ref added: {component.getName()}', DebugLevel.SOME)
-                            refs[component.getName()] = component
+                            if alreadyDefined:
+                                if refs[component.getName()].isUnique():
+                                    log.error(f'Cannot apply rule for {component.getName()}: Previously defined as `unique`.')
+                                log.debugprint(f'{component.getName()} overloaded.')
+                                refs[component.getName()] = component
+                            else:
+                                log.debugprint(f'Ref added: {component.getName()}', DebugLevel.SOME)
+                                refs[component.getName()] = component
                         elif value == False:
                             if refs[component.getName()] == component:
                                 refs.pop(component.getName())
-                    else:
-                        if hasattr(refs, component.getName()) is not None:
-                            log.debugprint(f'rule should modify {refs[component.getName()]}')
-                            refs[component.getName()].modify(rule, value)
+                    elif rule == "unique":
+                        log.debugprint(f'{component.getName()} set unique.')
+                        if alreadyDefined:
+                            refs[component.getName()].markUnique() #mark the reference, not the original
                         else:
-                            log.print(f'Rule declared without `use` or previous component to overload.', LogLevel.WARNING)
+                            log.error(f'Cannot mark undefined component unique: {component.getName()}')
+                    elif rule == "reroute":
+                        if alreadyDefined:
+                            sfrom, sto = value.split(':')
+                            log.debugprint(f'Rerouting {sfrom} to {sto}')
+                            component.changerefs(sfrom, sto) #modify the original prototype object rather than the export data source, so order of operations is not a factor
+                            #refs[component.getName()].changerefs(sfrom, sto) #doesn't work because later rules can accidentally redefine from the prototype
+                        else:
+                            log.error(f'Cannot modify routes for undefined component: {component.getName()}')
+                    elif rule == "name":
+                        log.debugprint(f'{component.getname()} renamed to {value}')
+                        if alreadyDefined:
+                            component.rename(value)
+                        else:
+                            log.error(f'Cannot rename undefined component: {component.getName()}')
+                    elif alreadyDefined:
+                        log.debugprint(f'rule should modify {refs[component.getName()]}')
+                        component.modify(rule, value)
+                    else:
+                        log.print(f'Rule declared without `use` or previous component to overload.', LogLevel.WARNING)
 
+                    log.debugprint(refs[component.getName()].getMetadata())
     log.debugprint("userefs:")
     for key, ref in refs.items():
         log.debugprint(f'{key}: {ref.getMetadata()}')

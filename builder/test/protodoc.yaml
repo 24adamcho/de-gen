@@ -4,8 +4,13 @@ layers:
   example:
     theme:
       use: True
+      components:
+        button:
+          primary.md:
+            unique: True
   another:
     theme:
+      reroute: "white:green"
       components:
         button:
           secondary.md:
