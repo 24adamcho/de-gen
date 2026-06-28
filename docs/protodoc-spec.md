@@ -70,7 +70,6 @@ Name | Type | Description
 -------------------------
 `use` | Bool | Use this component over the previous layer or base. Later component references in the same scope can either redundantly affirm use or disable use. Applying `use: False` means the layer is disabled and the previous layer's rule applies.
 `unique` | Bool | Any later component that attempts to redefine this component or any subcomponents throws an error. Default behaviour is `unique: False`.
-`reroute` | String | The specification for design.md includes a system for referencing other sections for styling. However, since multiple themes may not have compatible color references, a field is required for resolution.
-`force` | String | Sets the value of a component with the string.
+`reroute` | String:String | The specification for design.md includes a system for referencing other sections for styling. However, since multiple themes may not have compatible color references, a field is required for resolution.
 `name` | String | Sets the component name for identity resolution. Due to the fuzzy nature of the design.md standard, the lowest component referrence possible is through file names. This means the default behaviour is to identify components by file name, but file structure uniqueness is optional and may not be compatible between different themes. The `name` field means the component is forced to have a specific id, which should be coalesced throughout the rest of the document.
 
