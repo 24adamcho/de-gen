@@ -83,7 +83,7 @@ Name | Design.md section | Protodoc section value | Description
 ---------------------------------
 Overview | n/a | `overview` | Brand and style; frontmatter in this section is ignored. If a directory, all child components are concatenated.
 Colors | `colors` | `colors` | Color section maps the child component's frontmatters directly to the output section. Subreferences (such as `"{colors.primary}"`) are not dynamically resolved, and must be rerouted.
-Component | `component` | `component` | Components define parts and styles. The frontmatters are carried up to the component section. Component names are default resolved as `{directory}-{filename}`, similar to css. Component keys can be overloaded with the `name` rule. Component names are used for body section names.
+Component | `components` | `components` | Components define parts and styles. The frontmatters are carried up to the component section. Component names are default resolved as `{directory}-{filename}`, similar to css. Component keys can be overloaded with the `name` rule. Component names are used for body section names.
 Typography | `typography` | `typography` | Same as component section, but resolves `{filename}` as subsection key.
 Footer | n/a*** | `footer` | Section included at the end of the design.md. All child component bodies are concatenated.
 *`{filename}` does not include the file extensions. `"primary.md"` resolves to just `"primary"`.
@@ -109,7 +109,7 @@ layers:
         theme:
             components:
                 use: True
-                section: "component"
+                section: "components"
             layout:
                 use: True
                 section: "layout"
