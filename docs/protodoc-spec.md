@@ -90,7 +90,7 @@ Footer | n/a*** | `footer` | Section included at the end of the design.md. All c
 ** Sections named here have defaults for their design.md section titles; these can still be overloaded with `sectionTitle`
 *** Since there is no predefined footer title, it will use the value of `sectionTitle`, even if it is a blank string.
 
-Layout, elevation, and shapes are literally just components but you treat them special for some reason. For that reason, any nondefined section uses the flattened frontmatter and hoists it to the frontmatter in the output. The body is concatenated.
+Layout, elevation, and shapes are literally just components but you treat them special for some reason. For that reason, any nondefined component frontmatter and hoists it to the frontmatter in the output. The body is concatenated.
 Predefined sections are available, because typing the `sectionTitle` every time would probably get annoying. Predefined sections have their frontmatters hoisted, similar to nondefined sections.
 
 Name | Design.md section | Protodoc section value | Default title
