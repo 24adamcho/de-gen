@@ -11,11 +11,11 @@ class ThemeRef:
                 log.debugprint(f'File root: {root}, dir: {dir}, file: {file}')
                 log.print(f'Reading {root}/{file}')
                 with open(f'{root}/{file}', "r") as f:
-                    rpart = root.rpartition('/')[-1]
+                    parent = root.rpartition('/')[-1]
                     filenoext = file.rpartition('.')[0]
-                    qualifiedname = f'{rpart}-{filenoext}'
+                    qualifiedname = f'{parent}-{filenoext}'
                     log.debugprint(qualifiedname)
-                    self.themeparts[f'{root}/{file}'] = Component(f.read(), log, qualifiedname) #wacky hack to match the theme keyes to the flattened rules
+                    self.themeparts[f'{root}/{file}'] = Component(f.read(), log, qualifiedname, parent, filenoext) #wacky hack to match the theme keyes to the flattened rules
         pass
 
     def getThemeParts(self):

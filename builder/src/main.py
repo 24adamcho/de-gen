@@ -117,11 +117,22 @@ def main():
                         else:
                             log.error(f'Cannot modify routes for undefined component: {component.getName()}')
                     elif rule == "name":
-                        log.debugprint(f'{component.getname()} renamed to {value}')
+                        log.debugprint(f'{component.getName()} renamed to {value}')
                         if alreadyDefined:
                             component.rename(value)
                         else:
                             log.error(f'Cannot rename undefined component: {component.getName()}')
+                    elif rule == "section":
+                        log.debugprint(f'{component.getName()} should be put in {value} section')
+                        component.setSection(value)
+
+                        ## some sections modify component names
+                        if value == "component":
+                            component.rename(f'{component.getParent()}-{component.getFile()}')
+                        elif value == "typography":
+                            component.rename(f'{component.getFile()}')
+                        else: #i have no clue
+                            component.rename(f'{component.getParent()}-{component.getFile()}')
                     elif alreadyDefined:
                         log.debugprint(f'rule should modify {refs[component.getName()]}')
                         component.modify(rule, value)
@@ -133,7 +144,7 @@ def main():
     for key, ref in refs.items():
         log.debugprint(f'{key}: {ref.getMetadata()}')
 
-    assemble(log, '.', refs)
+    assemble(log, refs, protodoc)
 
 if __name__ == "__main__":
     main()

@@ -1,10 +1,15 @@
-version: "1.0"
+docver: "1.0"
 themes: ["example", "another"]
+defaultTitles: True
+headers:
+  name: "test design"
+  description: "A simple, lightweight test design for the degen system."
 layers:
   example:
     theme:
       use: True
       components:
+        section: "components"
         button:
           primary.md:
             unique: True
@@ -12,9 +17,10 @@ layers:
     theme:
       reroute: "white:green"
       components:
+        section: "components"
         button:
           secondary.md:
             use: True
           tertiary.md:
-            use: True
+            use: false
             backgroundColor: "black"
