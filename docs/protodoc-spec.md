@@ -98,6 +98,7 @@ Name | Design.md section | Protodoc section value | Default title
 Layout | `spacing` | `layout` | "Layout & Spacing"
 Elevation | n/a* | `elevation` | "Elevation & Depth"
 Shapes | `rounded` | `shapes` | "Shapes"
+*Elevation doesn't use the frontmatter according to spec, but it'll hoist it anyway.
 
 For example:
 ```yaml
