@@ -128,7 +128,7 @@ def assemble(log: Logger, refs: dict[str, Component], protodoc: Protodoc):
     
     finalmeta.update(protodoc.getHeaders()) #hoist headers. the output gets scrambled but it's yaml anyway so order doesn't matter. probably.
 
-    merged = '\n---\n' + yaml.dump(finalmeta) + '---\n' + finalbody
+    merged = '---\n' + yaml.dump(finalmeta) + '---\n\n' + finalbody
 
     log.print('Output:' + merged)
 

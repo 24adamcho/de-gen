@@ -46,10 +46,20 @@ def parse_args():
     return parser.parse_args()
 
 def initProtodoc(f: str):
-    with open(f, "r") as file:
+    filepath = Path(f)
+    if filepath.is_dir():
+        fcheck = filepath / "protodoc.yaml"
+        if fcheck.is_file() == False:
+            fcheck = filepath / "protodoc.yml"
+        if fcheck.is_file() == False:
+            log.error("Couldn't find protodoc.yaml.")
+        filepath = fcheck
+    print(filepath)
+
+    with filepath.open("r") as file:
         content = file.read()
         log.print(f'Read protodoc: {content}')
-        return Protodoc(f, content, log)
+        return Protodoc(str(filepath), content, log)
 
 def flatten(v: object, path: str, rules: list[dict[str, object]]):
     if isinstance(v, dict):
@@ -75,9 +85,9 @@ def write(protodoc: Protodoc, md: str):
 
     outpath = Path(dir)
     if outpath.is_dir():
-        outpath = outpath.joinpath("Design.md") #default file name
+        outpath = outpath / "Design.md" #default file name
     
-    with open(str(outpath), "w") as f:
+    with outpath.open("w") as f:
         f.write(md)
         log.print(f'Wrote output to {outpath}.')
 
