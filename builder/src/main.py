@@ -1,6 +1,6 @@
 import argparse
 import re
-from pathlib import Path
+from pathlib import Path, PurePath
 from log import Logger
 from log import LogLevel
 from log import DebugLevel
@@ -65,6 +65,21 @@ def flatten(v: object, path: str, rules: list[dict[str, object]]):
         rules.append({path: v})
     log.debugprint(f'rules contains: {rules}', DebugLevel.MORE)
     return rules
+
+def write(protodoc: Protodoc, md: str):
+    dir = "."
+    if protodoc.getOutputDir() is not None:
+        dir = str(protodoc.getOutputDir())
+    else:
+        dir = str(protodoc.getDir())
+
+    outpath = Path(dir)
+    if outpath.is_dir():
+        outpath = outpath.joinpath("Design.md") #default file name
+    
+    with open(str(outpath), "w") as f:
+        f.write(md)
+        log.print(f'Wrote output to {outpath}.')
 
 def main():
     args = parse_args()
@@ -183,7 +198,8 @@ def main():
     for key, ref in refs.items():
         log.debugprint(f'{key}: {ref.getMetadata()}')
 
-    assemble(log, refs, protodoc)
+    md = assemble(log, refs, protodoc)
+    write(protodoc, md)
 
 if __name__ == "__main__":
     main()

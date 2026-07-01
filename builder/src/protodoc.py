@@ -32,11 +32,8 @@ class Protodoc:
         else:
             log.error("Could not find field 'themes' in protodoc.")
 
-        if "outputDir" in data:
-            self.outputDir: str = data["outputDir"]
-            #TODO: check if outputDir is a file or a directory. default file output should be Design.md
-        else:
-            self.outputDir = str(self.dir)
+        if "output" in data:
+            self.outputDir: str = data["output"]
 
         if "layers" in data:
             self.layers: list[dict] = data["layers"]
@@ -132,7 +129,8 @@ class Protodoc:
         return self.dir
 
     def getOutputDir(self):
-        return self.getOutputDir
+        if hasattr(self, "outputDir"):
+            return self.outputDir
 
     def getSectionField(self, section: str, field: str, failOk: bool = True):
         if section in self.sections.keys():
