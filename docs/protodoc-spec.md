@@ -14,9 +14,9 @@ Name | Type | Example | Description
 `outputDir`? | String | `outputDir: "./designs"` | Output directory. Defaults to `"."`.
 `layers` | Multi-field tree | see section on layers | Structure describing what components are taken from themes.
 `defaultTitles`? | bool | Enables or disables default titles. Default: `false`. `sectionTitles` take precedence over default titles.
-`sectionTitles`? | Multiple String fields | Optional string that prepends or changes the title to a section's body when outputting. Section title keys use design.md specification unless otherwise stated (like for `elevation`.). Section title strings have their `<h2>` (`##`) items prepended. If the section title is undefined or an empty string (`""`), the title is not written.
+`sections`? | Multi-field tree | see Sections
 `headers`? | Multi-field tree | see design.md examples and documentation | YAML segment that is carried directly to the output design.md YAML.
-`title`? | String | Optional design.md body `<h1>` document title.
+`title`? | String | Optional design.md body `<h1>` document title. The # in `# Title` is not prepended.
 
 ## Layer fields:
 Layer fields should mirror the file structure of the components inside the theme they are borrowing from. Travelling down, each component can be either used as-is or traversed further for fine-grain control.
@@ -76,7 +76,45 @@ Name | Type | Description
 `section` | String | Declares a component, or directory of subcomponents, to be part of a design.md section.
 
 ### Sections
-Sections generally follow design.md specs for top level yaml in the design.md frontmatter and body content. The sections described here (except `footer`) are outputted according to specification order.
+Sections are document body elements that can be defined.
+
+```yaml
+docver: "1.0"
+themes: ["example/theme", "another/theme"]
+sections:
+    intentions:
+        title: "Design intentions"
+        prelude: "example/theme/instructions"
+layers:
+    example:
+        theme:
+            use: True
+            instructions:
+                section: "intentions"
+    another:
+        theme:
+            instructions:
+                section "intentions"
+```
+The output will use a markdown file 'example/theme/instructions.md' as the first body block in an off-spec section, and then concatenate any later section additions. 
+The section name is given by the key. Using the same section name as the design.md section overloads the default, if set.
+
+Name | Type | Description
+---------------------------------
+`use`? | Bool | Broadly enables or disables sections. Defaults true.
+`title`? | String | Prepended tite string. Defaults to not outputting. . Section title strings have their `<h2>` (`##`) items prepended. If the section title is undefined or an empty string (`""`), the title is not written.
+`order`? | Number | Determines the sorting order of the final output. The default is to assemble without thinking about it, with design.md sections taking precedence. When `defaultTitles` is set to true, default design.md sections are given the numerical value in the order they are defined (see spec).
+`referenceFormat`? | String("file", "parent-file", "full") | Enum for the component name reference format. Used to determine component reference collisions for overloads. Undefined defaults to "parent-file". When `defaultTitles` is set to true, the reference format is set per-section to closest approximation.
+.
+`prelude`? | String | Directions to a markdown file that will be used as the first body block. The prelude will not include itself in later concatenation. Defining the prelude to be a part of the section is not necessary, but can help illustrate that it is a member.
+`useMetadata`? | String("True", "False", "Layered", "Child") | Enum that determines how to hoist any frontmatter data for the section to the output. "True" means it will overlay itself on the top level frontmatter. "Layered" means it will overlay itself on an object named by the section. "Child" means it will use the file name to construct a parent object that the frontmatter is hoisted to, which is then layered on the section object. "False" means that the metadata will not be used. Default is "False". 
+`useBody`? | bool | Enables or disables using the body in the section when outputting. Defaults to True.
+`usePreludeMetadata`? | String("True", "False", "Layered", "Child") | Same as `useMetadata`.
+`memberPrefix`? | String | String to prepend to any body content that is declared to be a part of this section. Useful for bullet points.
+`memberPostfix`? | String | Appended version of `memberPrefix`. No clue if it's useful.
+`memberSplit`? | String | String used to join member body content together. For example, to put two newlines between bodies, the string `'\n\n'` is used. Default is '\n\n'.
+
+There are also default sections, which can be overridden. Default sections generally follow design.md specs for top level yaml in the design.md frontmatter and body content. The sections described here (except `footer`) are outputted according to specification order.
 
 Name | Design.md section | Protodoc section value | Description
 ---------------------------------
