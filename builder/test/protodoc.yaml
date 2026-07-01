@@ -1,5 +1,5 @@
 docver: "1.0"
-themes: ["example", "another"]
+themes: ["themes/example", "themes/another"]
 defaultTitles: True
 headers:
   name: "test design"
@@ -13,7 +13,7 @@ layers:
           primary.md:
             use: True
             unique: True
-          tertiary:
+          secondary:
             use: True
   another:
     theme:
@@ -24,5 +24,5 @@ layers:
           secondary.md:
             use: True
           tertiary.md:
-            use: false
+            use: True 
             backgroundColor: "black"

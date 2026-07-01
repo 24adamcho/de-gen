@@ -10,7 +10,7 @@ Name | Type | Example | Description
 ------------------
 `docver` | String | `docver:"1.0"` | Protodoc specification version
 `lang`? | String | `lang:"en-us"` | Language setting for design.md output.
-`themes` | String array | `themes: ["example/theme"]` | List of folder locations for theme imports.
+`themes` | String array | `themes: ["example/theme"]` | List of folder locations for theme imports. Folders are relative to the protodoc.yaml location.
 `outputDir`? | String | `outputDir: "./designs"` | Output directory. Defaults to `"."`.
 `layers` | Multi-field tree | see section on layers | Structure describing what components are taken from themes.
 `defaultTitles`? | bool | Enables or disables default titles. Default: `false`. `sectionTitles` take precedence over default titles.

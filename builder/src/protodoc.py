@@ -1,10 +1,14 @@
 import yaml
 from log import Logger
+from pathlib import Path
 
 class Protodoc:
-    def __init__(self, contents: str, log: Logger):
+    def __init__(self, dir: str, contents: str, log: Logger):
         self.contents = contents
         self.log = log
+        path = Path(dir)
+        self.dir = path.parent.relative_to(".")
+        log.debugprint(f'protodoc dir: {self.dir}')
 
         #parse yaml
         log.print("Loading protodoc...")
@@ -22,16 +26,17 @@ class Protodoc:
             #lang is str | None val, so no break
 
         if "themes" in data:
-            self.themes: list = data["themes"]
+            self.themes: list[str] = []
+            for theme in data["themes"]:
+                self.themes.append(str(self.dir.joinpath(theme)))
         else:
             log.error("Could not find field 'themes' in protodoc.")
 
         if "outputDir" in data:
             self.outputDir: str = data["outputDir"]
-            if self.outputDir[-1] is not '/': #postappend path trailing directory mark
-                self.outputDir += '/'
+            #TODO: check if outputDir is a file or a directory. default file output should be Design.md
         else:
-            self.outputDIr = "."
+            self.outputDir = str(self.dir)
 
         if "layers" in data:
             self.layers: list[dict] = data["layers"]
@@ -122,6 +127,9 @@ class Protodoc:
 
     def getLayers(self):
         return self.layers
+
+    def getDir(self):
+        return self.dir
 
     def getOutputDir(self):
         return self.getOutputDir

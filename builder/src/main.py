@@ -1,5 +1,6 @@
 import argparse
 import re
+from pathlib import Path
 from log import Logger
 from log import LogLevel
 from log import DebugLevel
@@ -9,11 +10,46 @@ from assembler import assemble
 
 log = Logger()
 
-def initProtodoc():
-    with open("test/protodoc.yaml", "r") as file:
+##thanks gpt
+def parse_args():
+    parser = argparse.ArgumentParser(
+        prog="",
+        description=""
+    )
+
+    # Positional argument
+    parser.add_argument(
+        "file",
+        help="Input file"
+    )
+
+    # Log level
+    parser.add_argument(
+        "--loglevel",
+        type=lambda s: LogLevel[s.upper()],
+        choices=list(LogLevel),
+        default=LogLevel.INFO,
+        metavar="{QUIET,FATAL,WARNING,INFO}",
+        help="Logging level"
+    )
+
+    # Debug level
+    parser.add_argument(
+        "--debuglevel",
+        type=lambda s: DebugLevel[s.upper()],
+        choices=list(DebugLevel),
+        default=DebugLevel.NONE,
+        metavar="{NONE,SOME,MORE,ALL}",
+        help="Debug level"
+    )
+
+    return parser.parse_args()
+
+def initProtodoc(f: str):
+    with open(f, "r") as file:
         content = file.read()
         log.print(f'Read protodoc: {content}')
-        return Protodoc(content, log)
+        return Protodoc(f, content, log)
 
 def flatten(v: object, path: str, rules: list[dict[str, object]]):
     if isinstance(v, dict):
@@ -31,27 +67,33 @@ def flatten(v: object, path: str, rules: list[dict[str, object]]):
     return rules
 
 def main():
-    log.setLogLevel(LogLevel.INFO)
-    log.setDebugLevel(DebugLevel.NONE)
+    args = parse_args()
+    log.setLogLevel(args.loglevel)
+    log.setDebugLevel(args.debuglevel)
     log.print("Start", LogLevel.INFO)
-    protodoc = initProtodoc()
+    protodoc = initProtodoc(args.file)
 
     themerefs = []
     for theme in protodoc.getThemes():
         log.debugprint(f'Reading for {theme}')
-        ref = ThemeRef(f'test/themes/{theme}', theme, log)
+        ref = ThemeRef(theme, theme, log)
         themerefs.append(ref)
 
     for ref in themerefs:
         parts = ref.getThemeParts()
         for k, v in parts.items():
-            log.debugprint(f'k:{k}')
+            log.debugprint(f'k:{k}', DebugLevel.MORE)
 
     
     layers = protodoc.getLayers()
-    rules = flatten(layers, 'test/themes', []) #wacky hack to match the flattened keys to the file paths in themerefs
+    log.debugprint(f'Layers: {layers}')
+    rules = []
+    for theme in themerefs:
+        rules.extend(flatten(layers, str(Path(theme.getPath()).parent), [])) #wacky hack to match the flattened keys to the file paths in themerefs
+        #TODO: This is dumb and leads to a lot of pain down there if it changes even slightly. Too unsable. Must change component name resolution and rule application sequence for full fix.
+
     for k in rules:
-        log.debugprint(f'k:{k}')
+        log.debugprint(f'rule k:{k}')
 
     ruleregex = []
     for e in rules:
@@ -70,19 +112,12 @@ def main():
         ruleregex.append((regex, rule, e[k]))
 
 
-    #    #iterate over theme refs and match
-    #    for theme in themerefs:
-    #        for ref in theme.getThemeParts().keys():
-    #            log.debugprint(f'attempting {ref} to {regex}')
-    #            match = regex.match(ref)
-    #            if match is not None:
-    #                log.debugprint(f'matched ref {ref}')
-    #                userefs.append(ref)
-
+    #we go ass backwards, going through each component and computing rules that apply to it.
     refs= {}
     for theme in themerefs:
         for ref in theme.getThemeParts().keys():
             for regex, rule, value in ruleregex:
+                log.debugprint(f'attempt match {ref} to {regex}')
                 if regex.match(ref) is not None:
                     log.debugprint(f'matched {ref} to {rule}:{value}')
                     component = theme.getThemeParts()[ref]
@@ -92,16 +127,18 @@ def main():
                     if rule == "use":
                         if value == True:
                             if alreadyDefined:
-                                if refs[component.getName()].isUnique():
-                                    log.error(f'Cannot apply rule for {component.getName()}: Previously defined as `unique`.')
-                                log.debugprint(f'{component.getName()} overloaded.')
-                                refs[component.getName()] = component
+                                if refs[component.getName()] != component:
+                                    if refs[component.getName()].isUnique():
+                                        log.error(f'Cannot apply rule for {component.getName()}: Previously defined as `unique`.')
+                                    log.debugprint(f'{component.getName()} overloaded.')
+                                    refs[component.getName()] = component
                             else:
                                 log.debugprint(f'Ref added: {component.getName()}', DebugLevel.SOME)
                                 refs[component.getName()] = component
                         elif value == False:
-                            if refs[component.getName()] == component:
-                                refs.pop(component.getName())
+                            if refs.get(component.getName()) is not None:
+                                if refs[component.getName()] == component:
+                                    refs.pop(component.getName())
                     elif rule == "unique":
                         log.debugprint(f'{component.getName()} set unique.')
                         if alreadyDefined:
