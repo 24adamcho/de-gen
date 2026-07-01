@@ -32,7 +32,7 @@ def flatten(v: object, path: str, rules: list[dict[str, object]]):
 
 def main():
     log.setLogLevel(LogLevel.INFO)
-    log.setDebugLevel(DebugLevel.SOME)
+    log.setDebugLevel(DebugLevel.NONE)
     log.print("Start", LogLevel.INFO)
     protodoc = initProtodoc()
 

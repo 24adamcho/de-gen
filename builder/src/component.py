@@ -11,7 +11,7 @@ class Component:
         self.file = file
         self.unique = False
         self.section: str | None = None
-        log.print(f'Read frontmatter: \n{self.metadata}\n---\n{self.body}')
+        log.debugprint(f'Read frontmatter: \n{self.metadata}\n---\n{self.body}')
 
     def getBody(self):
         return self.body
