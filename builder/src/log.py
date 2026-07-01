@@ -30,10 +30,6 @@ class Logger:
         if(loglevel.value <= self.loglevel.value):
             print(f'[{loglevel.name}] {msg}')
 
-        if(self.debuglevel.value == DebugLevel.MORE.value):
-            filename = caller_frame.filename
-            print(f'[DEBUG]\t\t@{filename}')
-
         if(self.debuglevel.value == DebugLevel.ALL.value):
             filename = caller_frame.filename
             function_name = caller_frame.function
@@ -44,7 +40,7 @@ class Logger:
         if(self.debuglevel.value >= debuglevel.value):
             if(self.debuglevel.value > DebugLevel.NONE.value):
                 print(f'[DEBUG] {msg}')
-                if(self.debuglevel.value >= DebugLevel.MORE.value):
+                if(self.debuglevel.value == DebugLevel.ALL.value):
                     caller_frame = inspect.stack()[1]
                     print(f'[DEBUG]\t\t@ {caller_frame.filename}:{caller_frame.lineno}')
 
