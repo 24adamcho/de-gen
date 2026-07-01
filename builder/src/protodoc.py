@@ -38,16 +38,65 @@ class Protodoc:
         else:
             log.error("Could not find field 'layers' in protodoc.")
 
+        self.sections: dict[str, dict] = {}
+
         if "defaultTitles" in data:
             self.defaultTitles: bool = data["defaultTitles"]
+
+            pretitles = { #default titles
+                "overview": {
+                    "title": "Brand & Style",
+                    "order": 0,
+                    "useMetadata": "False",
+                },
+                "colors": {
+                    "title": "Colors",
+                    "order": 1,
+                    "useMetadata": "Layered",
+                },
+                "typography": {
+                    "title": "Typography",
+                    "order": 2,
+                    "referenceFormat": "file",
+                    "useMetadata": "Child",
+                },
+                "layout": {
+                    "title": "Layout & Spacing",
+                    "order": 3,
+                },
+                "elevation": {
+                    "title": "Elevation & Depth",
+                    "order": 4,
+                },
+                "shapes": {
+                    "title": "Shapes",
+                    "order": 5,
+                    "useMetadata": "Layered",
+                },
+                "components": {
+                    "title": "Components",
+                    "order": 6,
+                    "useMetadata": "Child",
+                },
+                "footer": {
+                    "order": 7,
+                    "useMetadata": "False",
+                }
+            }
+            if self.defaultTitles is True:
+                self.sections.update(pretitles)
         else:
             self.defaultTitles = False
 
-        if "sectionTitles" in data:
-            self.sectionTitles: dict[str, str] = data["sectionTitles"]
+        if "sections" in data:
+            self.sections.update(data["sections"])
+        log.debugprint(f'Sections: \n{self.sections}')
 
         if "headers" in data:
             self.headers: dict = data["headers"]
+
+        if "title" in data:
+            self.title:str = data["title"]
         
         log.print('Parsed protodoc.')
         log.debugprint(self.getVersion())
@@ -77,34 +126,21 @@ class Protodoc:
     def getOutputDir(self):
         return self.getOutputDir
 
-    def getSectionTitles(self):
-        if hasattr(self, "sectionTitles"):
-            return self.sectionTitles
-        else:
-            self.log.debugprint("No section titles defined.")
-            return None
-
-    def getSectionTitle(self, section: str):
-        pretitles = { #default titles
-            "overview": "Brand & Style",
-            "colors": "Colors",
-            "typography": "Typography",
-            "layout": "Layout & Spacing",
-            "elevation": "Elevation & Depth",
-            "shapes": "Shapes",
-            "components": "Components",
-        }
-
-        if hasattr(self, "sectionTitles"):
-            return self.sectionTitles[section]
-        else:
-            if self.defaultTitles:
-                if section in pretitles.keys():
-                    return pretitles[section]
-                else:
-                    self.log.print(f'Section {section} has no title defined \nsuggestion: write \n---\nsectionTitles:\n\t{section}:"Title for this section"\n---\nin protodoc file.')
+    def getSectionField(self, section: str, field: str, failOk: bool = True):
+        if section in self.sections.keys():
+            if self.sections[section].get(field) is not None:
+                self.log.debugprint(f'Section {section} field {field} was value {self.sections[section][field]}')
+                return self.sections[section][field]
             else:
-                self.log.print(f'Section {section} has no title defined \nsuggestion: write \n---\nsectionTitles:\n\t{section}:"Title for this section"\n---\nin protodoc file, or enable procdoc field `defaultTitles: True`')
+                self.log.debugprint(f'Couldn\'t find field {field} in {section}.')
+        if failOk == False:
+            self.log.error(f'Section {section}\'s field {field} is undefined \nsuggestion: write \n---\nsections:\n\t{section}:{"{"}\n\t\ttitle:"Title for this section"{"}"}\n---\nin protodoc file, or enable procdoc field `defaultTitles: True`')
+        return None
+
+    def getSectionObject(self, section: str) -> dict | None:
+        if section in self.sections.keys():
+            return self.sections[section]
+        self.log.print(f'Section {section} is undefined \nsuggestion: write \n---\nsections:\n\t{section}:{"{"}\n\t\ttitle:"Title for this section"{"}"}\n---\nin protodoc file, or enable procdoc field `defaultTitles: True`')
         return None
 
     def getHeaders(self):
@@ -112,3 +148,7 @@ class Protodoc:
             return self.headers
         else:
             return {}
+
+    def getTitle(self):
+        if hasattr(self, "title"):
+            return self.title

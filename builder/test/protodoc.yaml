@@ -7,12 +7,14 @@ headers:
 layers:
   example:
     theme:
-      use: True
       components:
         section: "components"
         button:
           primary.md:
+            use: True
             unique: True
+          tertiary:
+            use: True
   another:
     theme:
       reroute: "white:green"

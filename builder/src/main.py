@@ -107,15 +107,11 @@ def main():
                         if alreadyDefined:
                             refs[component.getName()].markUnique() #mark the reference, not the original
                         else:
-                            log.error(f'Cannot mark undefined component unique: {component.getName()}')
+                            log.error(f'Cannot mark undefined component unique: {component.getName()}. Did you set `use: True`?')
                     elif rule == "reroute":
-                        if alreadyDefined:
-                            sfrom, sto = value.split(':')
-                            log.debugprint(f'Rerouting {sfrom} to {sto}')
-                            component.changerefs(sfrom, sto) #modify the original prototype object rather than the export data source, so order of operations is not a factor
-                            #refs[component.getName()].changerefs(sfrom, sto) #doesn't work because later rules can accidentally redefine from the prototype
-                        else:
-                            log.error(f'Cannot modify routes for undefined component: {component.getName()}')
+                        sfrom, sto = value.split(':')
+                        log.debugprint(f'Rerouting {sfrom} to {sto}')
+                        component.changerefs(sfrom, sto) #modify the original prototype object rather than the export data source, so order of operations is not a factor
                     elif rule == "name":
                         log.debugprint(f'{component.getName()} renamed to {value}')
                         if alreadyDefined:
@@ -127,19 +123,25 @@ def main():
                         component.setSection(value)
 
                         ## some sections modify component names
-                        if value == "component":
-                            component.rename(f'{component.getParent()}-{component.getFile()}')
-                        elif value == "typography":
-                            component.rename(f'{component.getFile()}')
-                        else: #i have no clue
+                        sectionobj = protodoc.getSectionObject(value)
+                        if sectionobj is not None:
+                            referenceFormat = protodoc.getSectionField(value, "referenceFormat")
+                            if referenceFormat == "file":
+                                component.rename(f'{component.getFile()}')
+                            elif referenceFormat == "parent-file":
+                                component.rename(f'{component.getParent()}-{component.getFile()}')
+                            else: #i have no clue
+                                component.rename(f'{component.getParent()}-{component.getFile()}')
+                        else: #undefined
                             component.rename(f'{component.getParent()}-{component.getFile()}')
                     elif alreadyDefined:
                         log.debugprint(f'rule should modify {refs[component.getName()]}')
-                        component.modify(rule, value)
+                        refs[component.getName()].modify(rule, value)
                     else:
                         log.print(f'Rule declared without `use` or previous component to overload.', LogLevel.WARNING)
 
-                    log.debugprint(refs[component.getName()].getMetadata())
+                    if refs.get(component.getName()) is not None:
+                        log.debugprint(refs[component.getName()].getMetadata())
     log.debugprint("userefs:")
     for key, ref in refs.items():
         log.debugprint(f'{key}: {ref.getMetadata()}')
