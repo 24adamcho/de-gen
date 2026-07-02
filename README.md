@@ -9,8 +9,9 @@ There are a few benefits to this:
 - Componentized markdown files organized into themes means they can be 'kitbashed', or assembled from several themes.
 
 ## How
+### Definitions
 There are four concepts to go over.
-### Component
+#### Component
 The definition for 'component' differs from the design.md specification. In this system, a component is defined as a markdown file that can have 'rules' applied to it.
 Here are the rules that can be applied to components:
 
@@ -22,7 +23,7 @@ Here are the rules that can be applied to components:
 | `name` | String | Sets the component name for identity resolution. Due to the fuzzy nature of the design.md standard, the lowest component referrence possible is through file names. This means the default behaviour is to identify components by file name, but file structure uniqueness is optional and may not be compatible between different themes. The `name` field means the component is forced to have a specific id, which should be coalesced throughout the rest of the document.
 | `section` | String | Declares a component, or directory of subcomponents, to be part of a design.md section.
 
-### Layer
+#### Layer
 A layer defines the member of a tree of components that determines the order they will be applied to the final output. For example:
 ```yaml
 layers:
@@ -53,7 +54,7 @@ Also to note, the field names of the members directly correspond to the file dir
 ```
 would approximately be the file structure of the example above.
 
-### Section
+#### Section
 A section is the structural definition of the parts of a design.md doc. For example, there are sections for 'components' and 'typography', that map directly to the body content of the markdown. Sections are also ordered, with some being prioritized in the default spec.
 Here are the fields that can be applied to sections:
 
@@ -112,7 +113,7 @@ layers:
             section: "overview" #declares this component to be placed in the 'overview' section of the output
 ```
 
-### Protodoc
+#### Protodoc
 The protodoc is a YAML file that defines the sections, components, layers, and other things that will be included outputted, or other options.
 
 | Name | Type | Example | Description
