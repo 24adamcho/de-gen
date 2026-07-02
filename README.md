@@ -122,10 +122,82 @@ The protodoc is a YAML file that defines the sections, components, layers, and o
 | `docver` | String | `docver:"1.0"` | Protodoc specification version (not currently used but required).
 | `lang`? | String | `lang:"en-us"` | Language setting for design.md output. (not currently used)
 | `themes` | String array | `themes: ["example/theme"]` | List of folder locations for theme imports. Folders are relative to the protodoc.yaml location.
-| `outputDir`? | String | `outputDir: "./designs"` | Output directory. Defaults to `"."`.
+| `outputDir`? | String | `outputDir: "./designs"` | Output directory or file. Defaults to the same directory as the protodoc.
 | `layers` | Multi-field tree | see section on layers | Structure describing what components are taken from themes.
 | `defaultSections`? | bool | Enables or disables default section definitions. Default: `false`. Defining a new section with the same key (see Section) take precedence over default definitions.
 | `sections`? | Multi-field tree | see Section
 | `headers`? | Multi-field tree | see design.md examples and documentation | YAML segment that is carried directly to the output design.md YAML.
 | `title`? | String | Optional design.md body `<h1>` document title. The # in `# Title` is not prepended.
 
+Here's an example for a protodoc:
+```yaml
+docver: "1.0"
+themes: ["themes/example", "themes/another", "prompts/"]
+outputDir: "prompts/Design.md"
+headers:
+    name: "Protodoc example."
+    version: "1"
+sections:
+    overview:
+        title: "Brand & Style"
+        order: 0
+    colors:
+        title: "Colors"
+        order: 1
+        useMetadata: "Layered"
+    typography:
+        title: "Typography"
+        order: 2
+        referenceFormat: "file"
+        useMetadata: "Child"
+    layout:
+        title: "Layout & Spacing"
+        order: 3
+    elevation:
+        title: "Elevation & Depth"
+        order: 4
+    shapes:
+        title: "Shapes"
+        order: 5
+        useMetadata: "Layered"
+    components:
+        title: "Components"
+        order: 6
+        useMetadata: "Child"
+    footer:
+        order 7
+        useMetadata: "False"
+layers:
+    prompts:
+        overview.md: #.md extension doesn't matter but it helps if you can label it
+            use: True
+            section: "overview"
+    example:
+        theme:
+            colors:
+                use: True
+                section: "colors"
+            typography:
+                use: True
+                section: "typography"
+            shapes:
+                use: True
+                section: "shapes"
+    another:
+        theme:
+            reroute: "{colors.primary}:{colors.red}" #some themes may not have compatible color references, so these replace the raw strings when they occur
+            reroute: "{colors.secondary}:{colors.white}"
+            reroute: "{colors.tertiary}:{colors.black}"
+            buttons: #example of a differently structured theme, where the components are thrown into the top level
+                use: True
+                section: "components"
+            textboxes:
+                use: True
+                section: "components"
+            fonts:
+                use: True
+                section: "typography"
+            layering:
+                use: True
+                section: "elevation"
+```
