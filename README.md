@@ -9,6 +9,11 @@ There are a few benefits to this:
 - Componentized markdown files organized into themes means they can be 'kitbashed', or assembled from several themes.
 
 ## How
+Run with
+```
+degen.sh protodoc.yaml
+```
+
 ### Definitions
 There are four concepts to go over.
 #### Component
