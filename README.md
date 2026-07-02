@@ -21,6 +21,7 @@ Rule | Type | Description
 `reroute` | String:String (`"From":"To"`) | The specification for design.md includes a system for referencing other sections for styling. However, since multiple themes may not have compatible color references, a field is required for resolution. The string will act as a replacement for any occurance of the first string.
 `name` | String | Sets the component name for identity resolution. Due to the fuzzy nature of the design.md standard, the lowest component referrence possible is through file names. This means the default behaviour is to identify components by file name, but file structure uniqueness is optional and may not be compatible between different themes. The `name` field means the component is forced to have a specific id, which should be coalesced throughout the rest of the document.
 `section` | String | Declares a component, or directory of subcomponents, to be part of a design.md section.
+---
 
 ### Layer
 A layer defines the member of a tree of components that determines the order they will be applied to the final output. For example:
@@ -71,6 +72,7 @@ Name | Type | Description
 `memberPrefix`? | String | String to prepend to any body content that is declared to be a part of this section. Useful for bullet points.
 `memberPostfix`? | String | Appended version of `memberPrefix`. No clue if it's useful.
 `memberSplit`? | String | String used to join member body content together. For example, to put two newlines between bodies, the string `'\n\n'` is used. Default is '\n\n'.
+---------------------------------
 
 There are also default sections, which can be overridden. Predefined sections available because typing the `sectionTitle` and othersomesuch configs every time would probably get annoying.  Default sections generally follow design.md specs for top level yaml in the design.md frontmatter and body content. The sections described here (except `footer`) are outputted according to specification order.
 
@@ -81,6 +83,7 @@ Colors | `colors` | `colors` | Color section maps the child component's frontmat
 Component | `components` | `components` | Components define parts and styles. The frontmatters are carried up to the component section. Component names are default resolved as `{directory}-{filename}`, similar to css. Component keys can be overloaded with the `name` rule. Component names are used for body section names.
 Typography | `typography` | `typography` | Same as component section, but resolves `{filename}` as subsection key.
 Footer | n/a*** | `footer` | Section included at the end of the design.md. All child component bodies are concatenated. Frontmatter in this section are ignored.
+---------------------------------
 *`{filename}` does not include the file extensions. `"primary.md"` resolves to just `"primary"`.
 ** Sections named here have defaults for their design.md section titles; these can still be overloaded with `sectionTitle`
 *** Since there is no predefined footer title, it will use the value of `sectionTitle`, even if it is a blank string.
@@ -92,6 +95,7 @@ Name | Protodoc section value | Default title
 Layout | `layout`*** | "Layout & Spacing"
 Elevation* | `elevation`** | "Elevation & Depth"
 Shapes | `shapes`*** | "Shapes"
+---------------------------------
 - **Elevation also does not have a defined design.md key, but for sectionTitle this is the string used.
 - ***Instead of using the design.md spec for design tokens, uses a more descriptive token for the section.
 
@@ -124,4 +128,5 @@ Name | Type | Example | Description
 `sections`? | Multi-field tree | see Section
 `headers`? | Multi-field tree | see design.md examples and documentation | YAML segment that is carried directly to the output design.md YAML.
 `title`? | String | Optional design.md body `<h1>` document title. The # in `# Title` is not prepended.
+------------------
 
