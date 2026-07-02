@@ -3,7 +3,7 @@ DeGen is a program that uses componentized markdown files to construct a design.
 
 ## Why
 There are a few benefits to this:
-- Sections and components are reusable between projects and versions
+- Themes and components are reusable between projects and versions
 - Outputs are deterministic, rather than ai-genning a new high-token-count design.md doc every time
 - Design.md docs are large and heavy to write by hand, but writing designs for smaller bits is easier
 - Componentized markdown files organized into themes means they can be 'kitbashed', or assembled from several themes.
@@ -31,6 +31,7 @@ layers:
         example:
             use: True
         another:
+            reroute: "{colors.white}:{colors.FFFFFF}"
             buttons:
                 use: True
 ```
@@ -56,6 +57,22 @@ would approximately be the file structure of the example above.
 
 #### Section
 A section is the structural definition of the parts of a design.md doc. For example, there are sections for 'components' and 'typography', that map directly to the body content of the markdown. Sections are also ordered, with some being prioritized in the default spec.
+
+Sections are defined in the protodoc:
+```yaml
+sections:
+    overview:
+        use: True
+        useMetadata: False
+        order: 0 #highest priority
+...
+layers:
+    project:
+        overview:
+            use: True
+            section: "overview" #declares this component to be placed in the 'overview' section of the output
+```
+
 Here are the fields that can be applied to sections:
 
 | Name | Type | Description
@@ -64,7 +81,6 @@ Here are the fields that can be applied to sections:
 | `title`? | String | Prepended tite string. Defaults to not outputting. . Section title strings have their `<h2>` (`##`) items prepended. If the section title is undefined or an empty string (`""`), the title is not written.
 | `order`? | Number | Determines the sorting order of the final output. The default is to assemble without thinking about it, with design.md sections taking precedence. When `defaultSections` is set to true, default design.md sections are given the numerical value in the order they are defined (see spec).
 | `referenceFormat`? | String("file", "parent-file", "full") | Enum for the component name reference format. Used to determine component reference collisions for overloads. Undefined defaults to "parent-file". When `defaultSections` is set to true, the reference format is set per-section to closest approximation of spec.
-| .
 | `prelude`? | String | Directions to a markdown file that will be used as the first body block. The prelude will not include itself in later concatenation. Defining the prelude to be a part of the section is not necessary, but can help illustrate that it is a member.
 | `useMetadata`? | String("True", "False", "Layered", "Child") | Enum that determines how to hoist any frontmatter data for the section to the output. "True" means it will overlay itself on the top level frontmatter. "Layered" means it will overlay itself on an object named by the section. "Child" means it will use the file name to construct a parent object that the frontmatter is hoisted to, which is then layered on the section object. "False" means that the metadata will not be used. Default is "False". 
 | `useBody`? | bool | Enables or disables using the body in the section when outputting. Defaults to True.
@@ -97,21 +113,6 @@ Predefined sections have their frontmatters hoisted, similar to nondefined secti
 
 - **Elevation also does not have a defined design.md key, but for sectionTitle this is the string used.
 - ***Instead of using the design.md spec for design tokens, uses a more descriptive token for the section.
-
-Sections are defined in the protodoc:
-```yaml
-sections:
-    overview:
-        use: True
-        useMetadata: False
-        order: 0 #highest priority
-...
-layers:
-    project:
-        overview:
-            use: True
-            section: "overview" #declares this component to be placed in the 'overview' section of the output
-```
 
 #### Protodoc
 The protodoc is a YAML file that defines the sections, components, layers, and other things that will be included outputted, or other options.
