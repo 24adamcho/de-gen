@@ -17,7 +17,7 @@ degen.sh protodoc.yaml
 ### Definitions
 There are four concepts to go over.
 #### Component
-The definition for 'component' differs from the design.md specification. In this system, a component is defined as a markdown file that can have 'rules' applied to it.
+The definition for 'component' differs from the design.md specification. In this system, a component is defined as a frontmatter markdown file that can have 'rules' applied to it.
 Here are the rules that can be applied to components:
 
 | Rule | Type | Description
@@ -27,6 +27,32 @@ Here are the rules that can be applied to components:
 | `reroute` | String:String (`"From":"To"`) | The specification for design.md includes a system for referencing other sections for styling. However, since multiple themes may not have compatible color references, a field is required for resolution. The string will act as a replacement for any occurance of the first string.
 | `name` | String | Sets the component name for identity resolution. Due to the fuzzy nature of the design.md standard, the lowest component referrence possible is through file names. This means the default behaviour is to identify components by file name, but file structure uniqueness is optional and may not be compatible between different themes. The `name` field means the component is forced to have a specific id, which should be coalesced throughout the rest of the document.
 | `section` | String | Declares a component, or directory of subcomponents, to be part of a design.md section.
+
+Depending on the section and layer, the markdown file's frontmatter metadata or body may or may not be outputted, as well as determining how the metadata is applied.
+Here's an example of a component:
+```md
+theme/buttons/basic.md
+---
+backgroundColor: lightgrey
+textColor: black
+---
+## Basic button
+A button that is meant for smaller decisions and actions.
+```
+See section definition to see how that becomes
+```md
+---
+...
+components:
+    buttons-basic:
+        backgroundColor: lightgrey
+        textColor: black
+---
+...
+## Components
+## Basic button
+A button that is meant for smaller decisions and actions.
+```
 
 #### Layer
 A layer defines the member of a tree of components that determines the order they will be applied to the final output. For example:
