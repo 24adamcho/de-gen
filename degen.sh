@@ -1,3 +1,3 @@
 #!/bin/sh
 
-python builder/src/main.py $@
+python "$(dirname "$0")/builder/src/main.py" $@
