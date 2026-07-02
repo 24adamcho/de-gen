@@ -24,7 +24,7 @@ Here are the rules that can be applied to components:
 
 ### Layer
 A layer defines the member of a tree of components that determines the order they will be applied to the final output. For example:
-```md
+```yaml
 layers:
     themes:
         example:
@@ -81,9 +81,10 @@ There are also default sections, which can be overridden. Predefined sections av
 | Component | `components` | `components` | Components define parts and styles. The frontmatters are carried up to the component section. Component names are default resolved as `{directory}-{filename}`, similar to css. Component keys can be overloaded with the `name` rule. Component names are used for body section names.
 | Typography | `typography` | `typography` | Same as component section, but resolves `{filename}` as subsection key.
 | Footer | n/a*** | `footer` | Section included at the end of the design.md. All child component bodies are concatenated. Frontmatter in this section are ignored.
-*`{filename}` does not include the file extensions. `"primary.md"` resolves to just `"primary"`.
-** Sections named here have defaults for their design.md section titles; these can still be overloaded with `sectionTitle`
-*** Since there is no predefined footer title, it will use the value of `sectionTitle`, even if it is a blank string.
+
+- *`{filename}` does not include the file extensions. `"primary.md"` resolves to just `"primary"`.
+- ** Sections named here have defaults for their design.md section titles; these can still be overloaded with `sectionTitle`
+- *** Since there is no predefined footer title, it will use the value of `sectionTitle`, even if it is a blank string.
 
 Predefined sections have their frontmatters hoisted, similar to nondefined sections.
 
@@ -92,6 +93,7 @@ Predefined sections have their frontmatters hoisted, similar to nondefined secti
 | Layout | `layout`*** | "Layout & Spacing"
 | Elevation* | `elevation`** | "Elevation & Depth"
 | Shapes | `shapes`*** | "Shapes"
+
 - **Elevation also does not have a defined design.md key, but for sectionTitle this is the string used.
 - ***Instead of using the design.md spec for design tokens, uses a more descriptive token for the section.
 
