@@ -1,6 +1,6 @@
 docver: "1.0"
 themes: ["themes/example", "themes/another"]
-defaultTitles: True
+defaultSections: True
 headers:
   name: "test design"
   description: "A simple, lightweight test design for the degen system."

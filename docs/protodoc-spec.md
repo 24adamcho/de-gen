@@ -13,7 +13,7 @@ Name | Type | Example | Description
 `themes` | String array | `themes: ["example/theme"]` | List of folder locations for theme imports. Folders are relative to the protodoc.yaml location.
 `outputDir`? | String | `outputDir: "./designs"` | Output directory. Defaults to `"."`.
 `layers` | Multi-field tree | see section on layers | Structure describing what components are taken from themes.
-`defaultTitles`? | bool | Enables or disables default titles. Default: `false`. `sectionTitles` take precedence over default titles.
+`defaultSections`? | bool | Enables or disables default section definitions. Default: `false`. `sectionTitles` take precedence over default titles.
 `sections`? | Multi-field tree | see Sections
 `headers`? | Multi-field tree | see design.md examples and documentation | YAML segment that is carried directly to the output design.md YAML.
 `title`? | String | Optional design.md body `<h1>` document title. The # in `# Title` is not prepended.
@@ -103,8 +103,8 @@ Name | Type | Description
 ---------------------------------
 `use`? | Bool | Broadly enables or disables sections. Defaults true.
 `title`? | String | Prepended tite string. Defaults to not outputting. . Section title strings have their `<h2>` (`##`) items prepended. If the section title is undefined or an empty string (`""`), the title is not written.
-`order`? | Number | Determines the sorting order of the final output. The default is to assemble without thinking about it, with design.md sections taking precedence. When `defaultTitles` is set to true, default design.md sections are given the numerical value in the order they are defined (see spec).
-`referenceFormat`? | String("file", "parent-file", "full") | Enum for the component name reference format. Used to determine component reference collisions for overloads. Undefined defaults to "parent-file". When `defaultTitles` is set to true, the reference format is set per-section to closest approximation.
+`order`? | Number | Determines the sorting order of the final output. The default is to assemble without thinking about it, with design.md sections taking precedence. When `defaultSections` is set to true, default design.md sections are given the numerical value in the order they are defined (see spec).
+`referenceFormat`? | String("file", "parent-file", "full") | Enum for the component name reference format. Used to determine component reference collisions for overloads. Undefined defaults to "parent-file". When `defaultSections` is set to true, the reference format is set per-section to closest approximation.
 .
 `prelude`? | String | Directions to a markdown file that will be used as the first body block. The prelude will not include itself in later concatenation. Defining the prelude to be a part of the section is not necessary, but can help illustrate that it is a member.
 `useMetadata`? | String("True", "False", "Layered", "Child") | Enum that determines how to hoist any frontmatter data for the section to the output. "True" means it will overlay itself on the top level frontmatter. "Layered" means it will overlay itself on an object named by the section. "Child" means it will use the file name to construct a parent object that the frontmatter is hoisted to, which is then layered on the section object. "False" means that the metadata will not be used. Default is "False". 

@@ -42,8 +42,8 @@ class Protodoc:
 
         self.sections: dict[str, dict] = {}
 
-        if "defaultTitles" in data:
-            self.defaultTitles: bool = data["defaultTitles"]
+        if "defaultSections" in data:
+            self.defaultSections: bool = data["defaultSections"]
 
             pretitles = { #default titles
                 "overview": {
@@ -85,10 +85,10 @@ class Protodoc:
                     "useMetadata": "False",
                 }
             }
-            if self.defaultTitles is True:
+            if self.defaultSections is True:
                 self.sections.update(pretitles)
         else:
-            self.defaultTitles = False
+            self.defaultSections = False
 
         if "sections" in data:
             self.sections.update(data["sections"])
@@ -140,13 +140,13 @@ class Protodoc:
             else:
                 self.log.debugprint(f'Couldn\'t find field {field} in {section}.')
         if failOk == False:
-            self.log.error(f'Section {section}\'s field {field} is undefined \nsuggestion: write \n---\nsections:\n\t{section}:{"{"}\n\t\ttitle:"Title for this section"{"}"}\n---\nin protodoc file, or enable procdoc field `defaultTitles: True`')
+            self.log.error(f'Section {section}\'s field {field} is undefined \nsuggestion: write \n---\nsections:\n\t{section}:{"{"}\n\t\ttitle:"Title for this section"{"}"}\n---\nin protodoc file, or enable procdoc field `defaultSections: True`')
         return None
 
     def getSectionObject(self, section: str) -> dict | None:
         if section in self.sections.keys():
             return self.sections[section]
-        self.log.print(f'Section {section} is undefined \nsuggestion: write \n---\nsections:\n\t{section}:{"{"}\n\t\ttitle:"Title for this section"{"}"}\n---\nin protodoc file, or enable procdoc field `defaultTitles: True`')
+        self.log.print(f'Section {section} is undefined \nsuggestion: write \n---\nsections:\n\t{section}:{"{"}\n\t\ttitle:"Title for this section"{"}"}\n---\nin protodoc file, or enable procdoc field `defaultSections: True`')
         return None
 
     def getHeaders(self):
