@@ -2,6 +2,7 @@ from component import Component
 from log import Logger
 from protodoc import Protodoc
 import yaml
+from pathlib import Path
 
 def assemble(log: Logger, refs: dict[str, Component], protodoc: Protodoc):
             
@@ -84,7 +85,7 @@ def assemble(log: Logger, refs: dict[str, Component], protodoc: Protodoc):
                 endbody.append(str(protodoc.getSectionField(section, "title")))
 
         if protodoc.getSectionField(section, "prelude") is not None:
-            preludefile = str(protodoc.getSectionField(section, "prelude"))
+            preludefile = str(Path(protodoc.getDir() / str(protodoc.getSectionField(section, "prelude"))))
             with open(preludefile) as f:
                 filename = preludefile.rpartition('/')[-1].rpartition('.')[0]
                 preluderef = Component(f.read(), log, "", "", filename) 
