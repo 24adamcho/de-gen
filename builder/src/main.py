@@ -174,7 +174,6 @@ def main():
                         sfrom, sto = value.split(':')
                         log.debugprint(f'Rerouting {sfrom} to {sto}')
                         component.changerefs(sfrom, sto) #modify the original prototype object rather than the export data source, so order of operations is not a factor
-                        #does not implicitly enable component
                     elif rule == "name":
                         log.debugprint(f'{component.getName()} renamed to {value}')
                         if alreadyDefined:
@@ -198,9 +197,6 @@ def main():
                                 component.rename(f'{component.getParent()}-{component.getFile()}')
                         else: #undefined
                             component.rename(f'{component.getParent()}-{component.getFile()}')
-
-                        if not alreadyDefined: #implicitly enable component
-                            refs[component.getName()] = component
                     elif alreadyDefined:
                         log.debugprint(f'rule should modify {refs[component.getName()]}')
                         refs[component.getName()].modify(rule, value)
