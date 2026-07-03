@@ -112,9 +112,11 @@ def assemble(log: Logger, refs: dict[str, Component], protodoc: Protodoc):
             pass
         else:
             if protodoc.getSectionField(section, "memberPrefix") is not None:
-                body[section].insert(0, str(protodoc.getSectionField(section, "memberPrefix")))
+                for index in range(len(body[section])):
+                    body[section][index] = str(protodoc.getSectionField(section, "memberPrefix")) + body[section][index]
             if protodoc.getSectionField(section, "memberPostfix") is not None:
-                body[section].insert(0, str(protodoc.getSectionField(section, "memberPostfix")))
+                for index in range(len(body[section])):
+                    body[section][index] = body[section][index] + str(protodoc.getSectionField(section, "memberPrefix"))
 
             if body[section] is not None:
                 if protodoc.getSectionField(section, "memberSplit") is not None:
