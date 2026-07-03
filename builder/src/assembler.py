@@ -17,7 +17,7 @@ def assemble(log: Logger, refs: dict[str, Component], protodoc: Protodoc):
             section: str = str(c.getSection())
         # otherwise section remains the dump bucket 'undefined'
 
-        log.debugprint(yaml.dump(protodoc.getSectionObject(section)))
+        log.debugprint(f'Section object: {yaml.dump(protodoc.getSectionObject(section))}')
 
         if protodoc.getSectionField(section, "use") == False: #if disabled, just skip it entirely
             continue

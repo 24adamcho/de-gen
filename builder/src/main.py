@@ -131,7 +131,7 @@ def main():
         log.debugprint(split)
 
         #regex match against theme refs
-        regex = re.compile(f'^{re.escape(path)}*')
+        regex = re.compile(f'^{re.escape(str(Path(path).relative_to(".")))}*')
         log.debugprint(path)
 
         ruleregex.append((regex, rule, e[k]))
@@ -143,7 +143,7 @@ def main():
         for ref in theme.getThemeParts().keys():
             for regex, rule, value in ruleregex:
                 log.debugprint(f'attempt match {ref} to {regex}')
-                if regex.match(ref) is not None:
+                if regex.match(str(Path(ref).relative_to("."))) is not None:
                     log.debugprint(f'matched {ref} to {rule}:{value}')
                     component = theme.getThemeParts()[ref]
                     alreadyDefined = component.getName() in refs.keys()
@@ -161,7 +161,7 @@ def main():
                                 log.debugprint(f'Ref added: {component.getName()}', DebugLevel.SOME)
                                 refs[component.getName()] = component
                         elif value == False:
-                            if refs.get(component.getName()) is not None:
+                            if alreadyDefined:
                                 if refs[component.getName()] == component:
                                     refs.pop(component.getName())
                     elif rule == "unique":
@@ -174,6 +174,7 @@ def main():
                         sfrom, sto = value.split(':')
                         log.debugprint(f'Rerouting {sfrom} to {sto}')
                         component.changerefs(sfrom, sto) #modify the original prototype object rather than the export data source, so order of operations is not a factor
+                        #does not implicitly enable component
                     elif rule == "name":
                         log.debugprint(f'{component.getName()} renamed to {value}')
                         if alreadyDefined:
@@ -193,9 +194,13 @@ def main():
                             elif referenceFormat == "parent-file":
                                 component.rename(f'{component.getParent()}-{component.getFile()}')
                             else: #i have no clue
+                                log.debugprint(f'Default format for {component} set to {component.getParent()}-{component.getFile()}')
                                 component.rename(f'{component.getParent()}-{component.getFile()}')
                         else: #undefined
                             component.rename(f'{component.getParent()}-{component.getFile()}')
+
+                        if not alreadyDefined: #implicitly enable component
+                            refs[component.getName()] = component
                     elif alreadyDefined:
                         log.debugprint(f'rule should modify {refs[component.getName()]}')
                         refs[component.getName()].modify(rule, value)
@@ -208,6 +213,7 @@ def main():
     for key, ref in refs.items():
         log.debugprint(f'{key}: {ref.getMetadata()}')
 
+    log.print("Assembling design...")
     md = assemble(log, refs, protodoc)
     write(protodoc, md)
 
