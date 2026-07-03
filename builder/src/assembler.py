@@ -64,6 +64,11 @@ def assemble(log: Logger, refs: dict[str, Component], protodoc: Protodoc):
     #   Components
     #   Do's and Don'ts (footer)
 
+    #'order' is required
+    #safety catch
+    for o in sectionobjs:
+        if o.get('order') is None:
+            log.error(f'Section {o["__nameref__"]} did not contain "order" key.')
     orderedsections = sorted(sectionobjs, key=lambda d: d['order'])
 
     endmeta = metadata #aggregate metadata block

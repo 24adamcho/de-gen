@@ -1,6 +1,15 @@
 import yaml
 from log import Logger
 from pathlib import Path
+import collections.abc
+
+def dict_deep_merge(d: dict, u) -> dict:
+    for k, v in u.items():
+        if isinstance(v, collections.abc.Mapping):
+            d[k] = dict_deep_merge(d.get(k, {}), v)
+        else:
+            d[k] = v
+    return d
 
 class Protodoc:
     def __init__(self, dir: str, contents: str, log: Logger):
@@ -91,7 +100,7 @@ class Protodoc:
             self.defaultSections = False
 
         if "sections" in data:
-            self.sections.update(data["sections"])
+            self.sections = dict_deep_merge(self.sections, data["sections"])
         log.debugprint(f'Sections: \n{self.sections}')
 
         if "headers" in data:
